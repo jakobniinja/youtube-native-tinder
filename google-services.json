@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "926875753114",
+    "project_id": "native-tinder-ios",
+    "storage_bucket": "native-tinder-ios.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:926875753114:android:f628d4e447c9eeed891d23",
+        "android_client_info": {
+          "package_name": "host.exp.exponent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "926875753114-3j6eiajjfj04es0tp7douicp7g2hii2u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtJ9O0jEGSEtiJpnrbRZtX5kt-hrW84W8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "926875753114-3j6eiajjfj04es0tp7douicp7g2hii2u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "926875753114-nd8uc4r2i9em8qq0muvpluub8gftudtk.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "host.exp.exponent"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
