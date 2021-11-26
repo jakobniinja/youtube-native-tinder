@@ -1,37 +1,45 @@
 {
   "project_info": {
-    "project_number": "926875753114",
-    "project_id": "native-tinder-ios",
-    "storage_bucket": "native-tinder-ios.appspot.com"
+    "project_number": "516864946729",
+    "project_id": "native-tinder-ss",
+    "storage_bucket": "native-tinder-ss.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:926875753114:android:f628d4e447c9eeed891d23",
+        "mobilesdk_app_id": "1:516864946729:android:34f018f8b77785be7c6238",
         "android_client_info": {
           "package_name": "host.exp.exponent"
         }
       },
       "oauth_client": [
         {
-          "client_id": "926875753114-3j6eiajjfj04es0tp7douicp7g2hii2u.apps.googleusercontent.com",
+          "client_id": "516864946729-e5aqrqah9lvfoueba6nell0ecj7t30e5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "host.exp.exponent",
+            "certificate_hash": "cfe6a50641168cbc355a17a116bf6ede523fc1a8"
+          }
+        },
+        {
+          "client_id": "516864946729-h8441hq5568ff6kup02f49jsa008on1b.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCtJ9O0jEGSEtiJpnrbRZtX5kt-hrW84W8"
+          "current_key": "AIzaSyA61sm7PErsg9g5s4vtGELszz0_Xv1WH7I"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "926875753114-3j6eiajjfj04es0tp7douicp7g2hii2u.apps.googleusercontent.com",
+              "client_id": "516864946729-h8441hq5568ff6kup02f49jsa008on1b.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "926875753114-nd8uc4r2i9em8qq0muvpluub8gftudtk.apps.googleusercontent.com",
+              "client_id": "516864946729-k02mt9f7bar6mamace93k8tq22b4lbbo.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
                 "bundle_id": "host.exp.exponent"

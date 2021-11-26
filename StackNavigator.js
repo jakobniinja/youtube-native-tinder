@@ -1,16 +1,13 @@
-import React from "react";
-import { View, Text } from "react-native";
+import React, { useContext } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "./screens/HomeScreen";
 import ChatScreen from "./screens/ChatScreen";
 import LoginScreen from "./screens/LoginScreen";
 import useAuth from "./hooks/useAuth";
-
 const Stack = createNativeStackNavigator();
 
 export default function StackNavigator() {
-  const { user } = useAuth();
-
+  const {user} = useAuth()
   return (
     <Stack.Navigator>
       {user ? (
