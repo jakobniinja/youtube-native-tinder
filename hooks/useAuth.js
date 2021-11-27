@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState,  useMemo} from "react";
 import { View, Text } from "react-native";
 import * as Google from "expo-google-app-auth";
 import {
@@ -22,18 +22,28 @@ const config = {
 };
 
 export const AuthProvider = ({ children }) => {
-    const [error, setError] = useState(null);
-const [user, setUser] = useState(null);
-
-    useEffect(() => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      setUser(user);
-    }else {
-        setUser(null)
-    }
-  });
-}, []);
+  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [loading, setLoading] = useState(true);
+  useEffect(
+    () =>
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          setUser(user);
+        } else {
+          setUser(null);
+        }
+        setLoadingInitial(false);
+      }),
+    []
+  );
+  const logout = () => {
+    setLoading(true);
+    signOut(auth)
+      .catch((err) => setError(err))
+      .finally(setLoading(false));
+  };
 
   const signInWithGoogle = async () => {
     await Google.logInAsync(config)
@@ -49,13 +59,22 @@ const [user, setUser] = useState(null);
         }
         return Promise.reject();
       })
-      .catch((err) => setError(err));
+      .catch((err) => setError(err))
+      .finally(() => setLoading(false));
   };
+  const memoedValue = useMemo(
+    () => ({
+      user,
+      signInWithGoogle,
+      loading,
+      error,
+      logout,
+    }),
+    [user, loading, error]
+  );
 
   return (
-    <AuthContext.Provider value={{user, signInWithGoogle }}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={memoedValue} >{!loadingInitial && children}</AuthContext.Provider>
   );
 };
 
