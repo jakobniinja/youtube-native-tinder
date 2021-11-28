@@ -2,12 +2,13 @@
 import { getAuth } from "@firebase/auth";
 import { initializeApp } from "firebase/app";
 import {getFirestore} from "firebase/firestore"
+import config from "./config"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyD0n-24pCsU0zf5Zj1KzAMr9eZXG3zuXv0",
+  apiKey: config.REACT_APP_FIREBASEKEY,
   authDomain: "native-tinder-ss.firebaseapp.com",
   projectId: "native-tinder-ss",
   storageBucket: "native-tinder-ss.appspot.com",

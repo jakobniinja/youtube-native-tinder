@@ -8,15 +8,14 @@ import {
   signOut,
 } from "@firebase/auth";
 import { auth } from "../firebase";
+import config   from "../config";
 
 const AuthContext = createContext({});
 // ja bror
 
-const config = {
-  androidClientId:
-    "516864946729-e5aqrqah9lvfoueba6nell0ecj7t30e5.apps.googleusercontent.com",
-  iosClientId:
-    "516864946729-k02mt9f7bar6mamace93k8tq22b4lbbo.apps.googleusercontent.com",
+const setup= {
+  androidClientId: config.REACT_APP_AC,
+  iosClientId: config.REACT_APP_IOSC ,
   scopes: ["profile", "email"],
   persmissoins: ["public_profile", "email", "gender", "location"],
 };
@@ -46,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signInWithGoogle = async () => {
-    await Google.logInAsync(config)
+    await Google.logInAsync(setup)
       .then(async (loginResult) => {
         if (loginResult.type === "success") {
           // login...
