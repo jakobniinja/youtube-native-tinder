@@ -59,7 +59,7 @@ export default function HomeScreen() {
           ></Image>
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate("Modal")}>
           <Image
             style={tw("h-14 w-14")}
             source={require("../tinder.png")}
@@ -150,11 +150,21 @@ export default function HomeScreen() {
       </View>
 
       <View style={tw("flex flex-row justify-evenly")}>
-        <TouchableOpacity style={tw("items-center justify-center rounded-full w-16 h-16 bg-red-200")}  onPress={() => swipeRef.current.swipeLeft()} >
-          <Entypo   name="cross" size={24} color="red" ></Entypo>
+        <TouchableOpacity
+          style={tw(
+            "items-center justify-center rounded-full w-16 h-16 bg-red-200"
+          )}
+          onPress={() => swipeRef.current.swipeLeft()}
+        >
+          <Entypo name="cross" size={24} color="red"></Entypo>
         </TouchableOpacity>
-        <TouchableOpacity style={tw("items-center justify-center rounded-full w-16 h-16 bg-green-200")} onPress={() => swipeRef.current.swipeRight()} >
-          <Entypo  name="heart" size={24} color="green" ></Entypo>
+        <TouchableOpacity
+          style={tw(
+            "items-center justify-center rounded-full w-16 h-16 bg-green-200"
+          )}
+          onPress={() => swipeRef.current.swipeRight()}
+        >
+          <Entypo name="heart" size={24} color="green"></Entypo>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
