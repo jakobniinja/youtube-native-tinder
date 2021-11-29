@@ -1,14 +1,35 @@
-import React, { useState } from "react";
+import { serverTimestamp, setDoc } from "@firebase/firestore";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import React, { useLayoutEffect, useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import tw from "tailwind-rn";
+import { db } from "../firebase";
 import useAuth from "../hooks/useAuth";
 
 export default function ModalScreen() {
   const { user } = useAuth();
+  const navigation = useNavigation();
   const [image, setImage] = useState(null);
   const [job, setJob] = useState(null);
   const [age, setAge] = useState(null);
+
   const incompleteForm = !image || !job || !age;
+
+  const updateUserProfile = () => { 
+    setDoc(doc(db,"users", user.uid), {
+      id: user.uid,
+      displayName: user.uid,
+      photoURL: image,
+      job: job,
+      age: age,
+      timestamp: serverTimestamp(),
+
+    }).then(() => {
+      navigation.goBack()
+    }).catch((err) => {
+      alert(err.message)
+    })
+  }
 
   return (
     <View style={tw("flex-1 items-center pt-1")}>
@@ -31,7 +52,7 @@ export default function ModalScreen() {
       </Text>
       <TextInput
         value={image}
-        onChangeText={(text) => setImage(text)}
+        onChangeText={setImage}
         style={tw("text-center text-xl pb-2")}
         placeholder="Enter a Profile Pic URL"
       ></TextInput>
@@ -40,7 +61,7 @@ export default function ModalScreen() {
       </Text>
       <TextInput
         value={job}
-        onChangeText={(text) => setJob(text)}
+        onChangeText={setJob}
         style={tw("text-center text-xl pb-2")}
         placeholder="Enter Your occupation "
       ></TextInput>
@@ -49,7 +70,7 @@ export default function ModalScreen() {
       </Text>
       <TextInput
         value={age}
-        onChangeText={(text) => setAge(text)}
+        onChangeText={setAge}
         style={tw("text-center text-xl pb-2")}
         placeholder="Enter your age "
         maxLength={2}
@@ -58,9 +79,11 @@ export default function ModalScreen() {
 
       <TouchableOpacity
         disabled={incompleteForm}
-        style={[tw("w-64 p-3 rounded-xl absolute bottom-10 bg-red-400 "), 
-          incompleteForm ? tw("bg-gray-400") : tw("bg-red-400")
+        style={[
+          tw("w-64 p-3 rounded-xl absolute bottom-10 bg-red-400 "),
+          incompleteForm ? tw("bg-gray-400") : tw("bg-red-400"),
         ]}
+        onPress={() => {console.log("profile is now up to date")}}
       >
         <Text style={tw("text-center text-white text-xl")}>Update Profile</Text>
       </TouchableOpacity>
