@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import tw from "tailwind-rn";
 import useAuth from "../hooks/useAuth";
 
 export default function ModalScreen() {
   const { user } = useAuth();
+  const [image, setImage] = useState(null);
+  const [job, setJob] = useState(null);
+  const [age, setAge] = useState(null);
+  const incompleteForm = !image || !job || !age;
+
   return (
     <View style={tw("flex-1 items-center pt-1")}>
       <Image
@@ -24,21 +29,40 @@ export default function ModalScreen() {
       <Text style={tw("text-center p-4 font-bold text-red-400")}>
         Step 1: The Proile Picture
       </Text>
-      <TextInput style={tw("text-center text-xl pb-2")} placeholder="Enter a Profile Pic URL"></TextInput>
+      <TextInput
+        value={image}
+        onChangeText={(text) => setImage(text)}
+        style={tw("text-center text-xl pb-2")}
+        placeholder="Enter a Profile Pic URL"
+      ></TextInput>
       <Text style={tw("text-center p-4 font-bold text-red-400")}>
         Step 2: The Job
       </Text>
-      <TextInput style={tw("text-center text-xl pb-2")} placeholder="Enter Your occupation "></TextInput>
+      <TextInput
+        value={job}
+        onChangeText={(text) => setJob(text)}
+        style={tw("text-center text-xl pb-2")}
+        placeholder="Enter Your occupation "
+      ></TextInput>
       <Text style={tw("text-center p-4 font-bold text-red-400")}>
         Step 3: The Age
       </Text>
-      <TextInput style={tw("text-center text-xl pb-2")}  placeholder="Enter your age "></TextInput>
+      <TextInput
+        value={age}
+        onChangeText={(text) => setAge(text)}
+        style={tw("text-center text-xl pb-2")}
+        placeholder="Enter your age "
+        maxLength={2}
+        keyboardType="numeric"
+      ></TextInput>
 
-
-      <TouchableOpacity style={tw("w-64 p-3 rounded-xl absolute bottom-10 bg-red-400 ")} >
-          <Text style={tw("text-center text-white text-xl")}  >
-              Update Profile
-          </Text>
+      <TouchableOpacity
+        disabled={incompleteForm}
+        style={[tw("w-64 p-3 rounded-xl absolute bottom-10 bg-red-400 "), 
+          incompleteForm ? tw("bg-gray-400") : tw("bg-red-400")
+        ]}
+      >
+        <Text style={tw("text-center text-white text-xl")}>Update Profile</Text>
       </TouchableOpacity>
     </View>
   );
