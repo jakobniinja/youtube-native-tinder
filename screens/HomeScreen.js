@@ -87,6 +87,27 @@ export default function HomeScreen() {
           verticalSwipe={false}
           animateCardOpacity
           cardIndex={0}
+          overlayLabels={{
+            left: {
+              title: "NO",
+              style: {
+                label: {
+                  textAlign: "right",
+                  color:"red"
+                },
+              },
+            },
+            right: {
+              title: "MATCH",
+              style:{
+                label: {
+                  color:"#4DED30"
+                }
+              }
+            }
+
+          }}
+
           renderCard={(card) => (
             <View key={card.id} style={tw("relative bg-white h-3/4 rounded-xl")}>
               <Text> {card.firstName} </Text>
