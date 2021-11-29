@@ -1,4 +1,4 @@
-import { serverTimestamp, setDoc } from "@firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "@firebase/firestore";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import React, { useLayoutEffect, useState } from "react";
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
@@ -83,7 +83,7 @@ export default function ModalScreen() {
           tw("w-64 p-3 rounded-xl absolute bottom-10 bg-red-400 "),
           incompleteForm ? tw("bg-gray-400") : tw("bg-red-400"),
         ]}
-        onPress={() => {console.log("profile is now up to date")}}
+        onPress={updateUserProfile}
       >
         <Text style={tw("text-center text-white text-xl")}>Update Profile</Text>
       </TouchableOpacity>

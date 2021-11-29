@@ -14,39 +14,23 @@ import tw from "tailwind-rn";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-deck-swiper";
 import { Entypo } from "@expo/vector-icons";
+import { doc, onSnapshot } from "@firebase/firestore";
+import { db } from "../firebase";
 
-const dummyData = [
-  {
-    firstName: "Jakob ",
-    lastName: "Yaro",
-    occupation: "Software Developer",
-    photoURL:
-      "https://images.squarespace-cdn.com/content/v1/534e4ffae4b02414fb6b56c1/1443360601736-0HCN7Y8IJRIRSM3NERKX/image.jpg?format=1000w",
-    age: 22,
-  },
-  {
-    firstName: "Anders ",
-    lastName: "B",
-    occupation: "Konsult",
-    photoURL:
-      "https://media-cdn.tripadvisor.com/media/photo-s/1c/ff/56/e3/san-dar-burgare-med-pommes.jpg",
-    age: 34,
-  },
-  {
-    firstName: "David ",
-    lastName: "R",
-    occupation: "chillare",
-    photoURL:
-      "https://media-cdn.tripadvisor.com/media/photo-s/1c/ff/56/e3/san-dar-burgare-med-pommes.jpg",
-    age: 33,
-  },
-];
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
   const swipeRef = useRef(null);
   const [profiles, setProfiles] = useState([])
+
+  useLayoutEffect(() => 
+     onSnapshot(doc(db, "users", user.uid), snapshot =>  {
+      if(!snapshot.exists()){
+        navigation.navigate("Modal")
+      }
+    })
+  , [])
 
   return (
     <SafeAreaView style={tw("flex-1  mt-14")}>
