@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useLayoutEffect, useRef } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -46,9 +46,10 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
   const swipeRef = useRef(null);
+  const [profiles, setProfiles] = useState([])
 
   return (
-    <SafeAreaView style={tw("flex-1")}>
+    <SafeAreaView style={tw("flex-1  mt-14")}>
       <View style={tw("flex-row  items-center justify-between px-5")}>
         <TouchableOpacity style={tw(" left-5 top-3")} onPress={logout}>
           <Image
@@ -58,7 +59,6 @@ export default function HomeScreen() {
             // source={{ uri: user.photoURL }}
           ></Image>
         </TouchableOpacity>
-
         <TouchableOpacity onPress={() => navigation.navigate("Modal")}>
           <Image
             style={tw("h-14 w-14")}
@@ -84,7 +84,7 @@ export default function HomeScreen() {
       <View style={tw("flex-1 -mt-6")}>
         <Swiper
           ref={swipeRef}
-          cards={dummyData}
+          cards={profiles}
           containerStyle={{ backgroundColor: "transparent" }}
           backgroundColor={"4FDOE9"}
           stackSize={5}
@@ -116,7 +116,7 @@ export default function HomeScreen() {
               },
             },
           }}
-          renderCard={(card) => (
+          renderCard={(card) => card ? (
             <View
               key={card.id}
               style={tw("relative bg-white h-3/4 rounded-xl")}
@@ -144,6 +144,16 @@ export default function HomeScreen() {
                 </View>
                 <Text style={tw("text-2xl font-bold")}>{card.age}</Text>
               </View>
+            </View>
+          ): (
+            <View
+            style={[tw("relative bg-white h-3/4 rounded-xl justify-center items-center"), styles.cardShadow]}
+            >
+              <Text style={tw("font-bold pb-5")} >
+                No More Profiles
+              </Text>
+                <Image  style={tw("h-20 w-20")} height={100} width={100} source={{uri: "https://links.papareact.com/6gb"}} >
+                </Image>
             </View>
           )}
         />
