@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useLayoutEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -14,23 +14,52 @@ import tw from "tailwind-rn";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-deck-swiper";
 import { Entypo } from "@expo/vector-icons";
-import { doc, onSnapshot } from "@firebase/firestore";
+import { collection, doc, onSnapshot, setDoc } from "@firebase/firestore";
 import { db } from "../firebase";
-
 
 export default function HomeScreen() {
   const navigation = useNavigation();
   const { user, logout } = useAuth();
   const swipeRef = useRef(null);
-  const [profiles, setProfiles] = useState([])
+  const [profiles, setProfiles] = useState([]);
 
-  useLayoutEffect(() => 
-     onSnapshot(doc(db, "users", user.uid), snapshot =>  {
-      if(!snapshot.exists()){
-        navigation.navigate("Modal")
-      }
-    })
-  , [])
+  useLayoutEffect(
+    () =>
+      onSnapshot(doc(db, "users", user.uid), (snapshot) => {
+        if (!snapshot.exists()) {
+          navigation.navigate("Modal");
+        }
+      }),
+    []
+  );
+  // shu min broder
+  useEffect(() => {
+    let unsub;
+    const fetchCards = async () => {};
+    unsub = onSnapshot(collection(db, "users"), (snapshot) => {
+      setProfiles(
+        snapshot.docs
+          .filter((doc) => doc.id !== user.uid)
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+      );
+    });
+    fetchCards();
+    return unsub;
+  }, []);
+  console.log(profiles);
+
+  const swipeLeft = (cardIndex) => {
+    if (!profiles[cardIndex]) return;
+    const userSwiped = profiles[cardIndex];
+    console.log(`you swiped pass on ${userSwiped.displayName}`);
+    setDoc(doc(db, "users", user.uid, "passes", userSwiped.id), userSwiped);
+  };
+  const swipeRight = async () => {
+    if (!profiles[cardIndex]) return;
+  };
 
   return (
     <SafeAreaView style={tw("flex-1  mt-14")}>
@@ -75,10 +104,12 @@ export default function HomeScreen() {
           verticalSwipe={false}
           animateCardOpacity
           cardIndex={0}
-          onSwipedLeft={() => {
+          onSwipedLeft={(cardIndex) => {
+            swipeLeft(cardIndex);
             console.log("diss");
           }}
           onSwipedRight={() => {
+            swipeRight(cardIndex);
             console.log("match");
           }}
           overlayLabels={{
@@ -100,46 +131,55 @@ export default function HomeScreen() {
               },
             },
           }}
-          renderCard={(card) => card ? (
-            <View
-              key={card.id}
-              style={tw("relative bg-white h-3/4 rounded-xl")}
-            >
-              <Text> {card.firstName} </Text>
-              <Image
-                style={tw("absolute top-0 h-full  w-full rounded-xl ")}
-                source={{ uri: card.photoURL }}
-              ></Image>
+          renderCard={(card) =>
+            card ? (
+              <View
+                key={card.id}
+                style={tw("relative bg-white h-3/4 rounded-xl")}
+              >
+                <Text> {card.firstName} </Text>
+                <Image
+                  style={tw("absolute top-0 h-full  w-full rounded-xl ")}
+                  source={{ uri: card.photoURL }}
+                ></Image>
 
+                <View
+                  style={[
+                    tw(
+                      "absolute bottom-0 bg-white w-full flex-row justify-between items-center h-20"
+                    ),
+                    styles.cardShadow,
+                  ]}
+                >
+                  <View>
+                    <Text style={tw("text-xl font-bold")}>
+                      {card.firstName}
+                      {card.lastName}
+                    </Text>
+                    <Text>{card.occupation}</Text>
+                  </View>
+                  <Text style={tw("text-2xl font-bold")}>{card.age}</Text>
+                </View>
+              </View>
+            ) : (
               <View
                 style={[
                   tw(
-                    "absolute bottom-0 bg-white w-full flex-row justify-between items-center h-20"
+                    "relative bg-white h-3/4 rounded-xl justify-center items-center"
                   ),
                   styles.cardShadow,
                 ]}
               >
-                <View>
-                  <Text style={tw("text-xl font-bold")}>
-                    {card.firstName}
-                    {card.lastName}
-                  </Text>
-                  <Text>{card.occupation}</Text>
-                </View>
-                <Text style={tw("text-2xl font-bold")}>{card.age}</Text>
+                <Text style={tw("font-bold pb-5")}>No More Profiles</Text>
+                <Image
+                  style={tw("h-20 w-20")}
+                  height={100}
+                  width={100}
+                  source={{ uri: "https://links.papareact.com/6gb" }}
+                ></Image>
               </View>
-            </View>
-          ): (
-            <View
-            style={[tw("relative bg-white h-3/4 rounded-xl justify-center items-center"), styles.cardShadow]}
-            >
-              <Text style={tw("font-bold pb-5")} >
-                No More Profiles
-              </Text>
-                <Image  style={tw("h-20 w-20")} height={100} width={100} source={{uri: "https://links.papareact.com/6gb"}} >
-                </Image>
-            </View>
-          )}
+            )
+          }
         />
       </View>
 
