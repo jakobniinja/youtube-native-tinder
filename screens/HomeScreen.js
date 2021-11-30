@@ -31,7 +31,7 @@ export default function HomeScreen() {
   const swipeRef = useRef(null);
   const [profiles, setProfiles] = useState([]);
 
-  useLayoutEffect(
+useLayoutEffect(
     () =>
       onSnapshot(doc(db, "users", user.uid), (snapshot) => {
         if (!snapshot.exists()) {
@@ -41,13 +41,14 @@ export default function HomeScreen() {
     []
   );
   // shu min broder
-  useEffect(() => {
+  useEffect(async() => {
     let unsub;
 
-    const passes = getDocs(collection(db, "users", user.uid, "passes")).then(
+    const passes =await getDocs(collection(db, "users", user.uid, "passes")).then(
       (snapshot) => snapshot.docs.map((doc) => doc.id)
     );
-    const swipes = getDocs(collection(db, "users", user.uid, "swipes")).then(
+    // shu min brolle
+    const swipes = await getDocs(collection(db, "users", user.uid, "swipes")).then(
       (snapshot) => snapshot.docs.map((doc) => doc.id)
     )
     const passedUserIds = passes.length > 0 ? passes : ["test"];
@@ -69,7 +70,7 @@ export default function HomeScreen() {
     );
     fetchCards();
     return unsub;
-  }, []);
+  }, [db]);
   console.log(profiles);
 
   const swipeLeft = (cardIndex) => {
