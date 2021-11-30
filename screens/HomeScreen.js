@@ -14,7 +14,15 @@ import tw from "tailwind-rn";
 import { Ionicons } from "@expo/vector-icons";
 import Swiper from "react-native-deck-swiper";
 import { Entypo } from "@expo/vector-icons";
-import { collection, doc, onSnapshot, setDoc } from "@firebase/firestore";
+import {
+  collection,
+  doc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  where,
+} from "@firebase/firestore";
 import { db } from "../firebase";
 
 export default function HomeScreen() {
@@ -35,17 +43,30 @@ export default function HomeScreen() {
   // shu min broder
   useEffect(() => {
     let unsub;
+
+    const passes = getDocs(collection(db, "users", user.uid, "passes")).then(
+      (snapshot) => snapshot.docs.map((doc) => doc.id)
+    );
+    const swipes = getDocs(collection(db, "users", user.uid, "swipes")).then(
+      (snapshot) => snapshot.docs.map((doc) => doc.id)
+    )
+    const passedUserIds = passes.length > 0 ? passes : ["test"];
+    const swipesUserIds =swipes.length > 0 ? swipes : ["test mathces"];
+
     const fetchCards = async () => {};
-    unsub = onSnapshot(collection(db, "users"), (snapshot) => {
-      setProfiles(
-        snapshot.docs
-          .filter((doc) => doc.id !== user.uid)
-          .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-      );
-    });
+    unsub = onSnapshot(
+      query(collection(db, "users"), where("id", "not-in", [...passedUserIds, ...swipesUserIds])),
+      (snapshot) => {
+        setProfiles(
+          snapshot.docs
+            .filter((doc) => doc.id !== user.uid)
+            .map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+        );
+      }
+    );
     fetchCards();
     return unsub;
   }, []);
@@ -57,19 +78,21 @@ export default function HomeScreen() {
     console.log(`you swiped pass on ${userSwiped.displayName}`);
     setDoc(doc(db, "users", user.uid, "passes", userSwiped.id), userSwiped);
   };
-  const swipeRight = async () => {
-    if (!profiles[cardIndex]) return;
+  const swipeRight = (cardIndex) => {
+        if (!profiles[cardIndex]) return;
+    const userSwiped = profiles[cardIndex];
+    console.log(`you swiped yes on ${userSwiped.displayName}`);
+    setDoc(doc(db, "users", user.uid, "swipes", userSwiped.id), userSwiped);
+
   };
 
   return (
     <SafeAreaView style={tw("flex-1  mt-14")}>
       <View style={tw("flex-row  items-center justify-between px-5")}>
         <TouchableOpacity style={tw(" left-5 top-3")} onPress={logout}>
-          <Image
-            style={tw("h-10 w-10 rounded-full")}
-            source={require("../tinder.png")}
-
-            // source={{ uri: user.photoURL }}
+        <Image
+          style={tw("h-10 w-10 rounded-full")}
+            source={{ uri: user.photoURL }}
           ></Image>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Modal")}>
@@ -108,7 +131,7 @@ export default function HomeScreen() {
             swipeLeft(cardIndex);
             console.log("diss");
           }}
-          onSwipedRight={() => {
+          onSwipedRight={(cardIndex) => {
             swipeRight(cardIndex);
             console.log("match");
           }}
