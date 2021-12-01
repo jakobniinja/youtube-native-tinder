@@ -17,13 +17,17 @@ import { Entypo } from "@expo/vector-icons";
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   onSnapshot,
   query,
+  serverTimestamp,
   setDoc,
   where,
 } from "@firebase/firestore";
 import { db } from "../firebase";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import generateId from "../lib/generateId";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -31,7 +35,7 @@ export default function HomeScreen() {
   const swipeRef = useRef(null);
   const [profiles, setProfiles] = useState([]);
 
-useLayoutEffect(
+  useLayoutEffect(
     () =>
       onSnapshot(doc(db, "users", user.uid), (snapshot) => {
         if (!snapshot.exists()) {
@@ -41,22 +45,25 @@ useLayoutEffect(
     []
   );
   // shu min broder
-  useEffect(async() => {
+  useEffect(async () => {
     let unsub;
 
-    const passes =await getDocs(collection(db, "users", user.uid, "passes")).then(
-      (snapshot) => snapshot.docs.map((doc) => doc.id)
-    );
+    const passes = await getDocs(
+      collection(db, "users", user.uid, "passes")
+    ).then((snapshot) => snapshot.docs.map((doc) => doc.id));
     // shu min brolle
-    const swipes = await getDocs(collection(db, "users", user.uid, "swipes")).then(
-      (snapshot) => snapshot.docs.map((doc) => doc.id)
-    )
+    const swipes = await getDocs(
+      collection(db, "users", user.uid, "swipes")
+    ).then((snapshot) => snapshot.docs.map((doc) => doc.id));
     const passedUserIds = passes.length > 0 ? passes : ["test"];
-    const swipesUserIds =swipes.length > 0 ? swipes : ["test mathces"];
+    const swipesUserIds = swipes.length > 0 ? swipes : ["test mathces"];
 
     const fetchCards = async () => {};
     unsub = onSnapshot(
-      query(collection(db, "users"), where("id", "not-in", [...passedUserIds, ...swipesUserIds])),
+      query(
+        collection(db, "users"),
+        where("id", "not-in", [...passedUserIds, ...swipesUserIds])
+      ),
       (snapshot) => {
         setProfiles(
           snapshot.docs
@@ -73,27 +80,60 @@ useLayoutEffect(
   }, [db]);
   console.log(profiles);
 
-  const swipeLeft = (cardIndex) => {
+  const swipeLeft = async (cardIndex) => {
     if (!profiles[cardIndex]) return;
     const userSwiped = profiles[cardIndex];
+
     console.log(`you swiped pass on ${userSwiped.displayName}`);
     setDoc(doc(db, "users", user.uid, "passes", userSwiped.id), userSwiped);
   };
-  const swipeRight = (cardIndex) => {
-        if (!profiles[cardIndex]) return;
+  const swipeRight = async (cardIndex) => {
+    if (!profiles[cardIndex]) return;
     const userSwiped = profiles[cardIndex];
-    console.log(`you swiped yes on ${userSwiped.displayName}`);
-    setDoc(doc(db, "users", user.uid, "swipes", userSwiped.id), userSwiped);
+    const loggedInProfile = await await (
+      await getDoc(doc(db, "users", user.uid))
+    ).data();
 
+    getDoc(doc(db, "users", userSwiped.id, "swipes", user.uid)).then(
+      (documentSnapshot) => {
+        if (documentSnapshot.exists()) {
+          console.log(` you matched with ${userSwiped.displayName} `);
+          setDoc(
+            doc(db, "users", user.uid, "swipes", userSwiped.id),
+            userSwiped
+          );
+
+          // create a match
+          setDoc(doc(db, "matches", generateId(user.uid, userSwiped.id)), {
+            users: {
+              [user.uid]: loggedInProfile,
+              [userSwiped.id]: userSwiped,
+            },
+            usersMatched: [user.uid, userSwiped.id],
+            timestamp: serverTimestamp(),
+          });
+          navigation.navigate("Match", {
+            loggedInProfile, userSwiped
+          })
+        } else {
+          console.log(`you swiped yes on ${userSwiped.displayName}`);
+          setDoc(
+            doc(db, "users", user.uid, "swipes", userSwiped.id),
+            userSwiped
+          );
+        }
+      }
+    );
   };
 
   return (
     <SafeAreaView style={tw("flex-1  mt-14")}>
       <View style={tw("flex-row  items-center justify-between px-5")}>
         <TouchableOpacity style={tw(" left-5 top-3")} onPress={logout}>
-        <Image
-          style={tw("h-10 w-10 rounded-full")}
-            source={{ uri: user.photoURL }}
+          <Image
+            style={tw("h-10 w-10 rounded-full")}
+            source={require("../tinder.png")}
+            // source={{ uri: user.photoURL }}
           ></Image>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Modal")}>
