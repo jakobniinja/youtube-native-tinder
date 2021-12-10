@@ -31,20 +31,19 @@ import generateId from "../lib/generateId";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const { user, logout } = useAuth();
+  const {user, logout} = useAuth()
   const swipeRef = useRef(null);
   const [profiles, setProfiles] = useState([]);
 
-  useLayoutEffect(
-    () =>
-      onSnapshot(doc(db, "users", user.uid), (snapshot) => {
-        if (!snapshot.exists()) {
-          navigation.navigate("Modal");
-        }
-      }),
-    []
-  );
-  // shu min broder
+  // useLayoutEffect(
+  //   () =>
+  //     onSnapshot(doc(db, "users", user.uid), (snapshot) => {
+  //       if (!snapshot.exists()) {
+  //         navigation.navigate("Modal");
+  //       }
+  //     }),
+  //   []
+  // );
   useEffect(async () => {
     let unsub;
 
@@ -85,12 +84,12 @@ export default function HomeScreen() {
     const userSwiped = profiles[cardIndex];
 
     console.log(`you swiped pass on ${userSwiped.displayName}`);
-    setDoc(doc(db, "users", user.uid, "passes", userSwiped.id), userSwiped);
+    // setDoc(doc(db, "users", user.uid, "passes", userSwiped.id), userSwiped);
   };
   const swipeRight = async (cardIndex) => {
     if (!profiles[cardIndex]) return;
     const userSwiped = profiles[cardIndex];
-    const loggedInProfile = await await (
+    const loggedInProfile = await (
       await getDoc(doc(db, "users", user.uid))
     ).data();
 
@@ -133,7 +132,7 @@ export default function HomeScreen() {
           <Image
             style={tw("h-10 w-10 rounded-full")}
             source={require("../tinder.png")}
-            // source={{ uri: user.photoURL }}
+            // source={{ uri: user.photoURL  }}
           ></Image>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate("Modal")}>
