@@ -5,6 +5,7 @@ import ChatScreen from "./screens/ChatScreen";
 import LoginScreen from "./screens/LoginScreen";
 import ModalScreen from "./screens/ModalScreen";
 import MatchScreen from "./screens/MatchScreen";
+import MessageScreen from "./screens/MessageScreen";
 const Stack = createNativeStackNavigator();
 
 export default function StackNavigator() {
