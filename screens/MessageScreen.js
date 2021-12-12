@@ -12,6 +12,8 @@ import {
   Keyboard,
 } from "react-native";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import {db} from "../firebase"
+import {serverTimestamp, addDoc, collection, query, orderBy} from "@firebase/firestore"
 
 
 import  SenderMessage from "../component/SenderMessage"
@@ -26,8 +28,26 @@ const MessageScreen = ({ matchDetails }) => {
   const { matchDetails } = params;
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState([])
+  
+  useEffect(() => {
+    onSnapshot(query(collection(db, "matches", matchDetails.id, "messages" ), orderBy("timestamp", "desc") ),
+    ), (snapshot) => setMessages(snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    })))
+  }, [matchDetails, db])
 
-  const sendMessage = () => {};
+  const sendMessage = () => {
+      addDoc(collection(db, "matches", matchDetails.id, "messages" ), {
+        timestamp: serverTimestamp(),
+        userId: user.uid,
+        displayName: user.displayName,
+        photoURL: matchDetails.users[user.uid].photoURL,
+        message: input
+      })
+      setInput("")
+
+  };
 
   return (
     <SafeAreaView style={tw("flex-1")}>
@@ -44,6 +64,7 @@ const MessageScreen = ({ matchDetails }) => {
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <FlatList 
           data={messages} 
+          inverted={-1}
           style={tw("pl-4")}
           keyExtractor={item = item.id}
           renderItem={({item : message}) => 
